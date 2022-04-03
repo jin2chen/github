@@ -1,17 +1,11 @@
 name: Manual workflow
 
-on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Person to greet'
-        default: 'World'
-        required: true
+on: [push, pull_request]
 
 jobs:
   greet:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      - name: github context
+        run: echo '${{ toJSON(github) }}'
