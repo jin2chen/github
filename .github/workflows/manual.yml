@@ -1,0 +1,11 @@
+name: Manual workflow
+
+on: [push, pull_request]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: github context
+        run: echo '${{ toJSON(github) }}'
