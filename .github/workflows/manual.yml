@@ -13,6 +13,6 @@ jobs:
 
     steps:
       - name: Show ref
-        run: echo '${{ toJSON(inputs) }}'
+        run: echo '${{ toJSON(github.event.inputs) }}'
       - name: github context
         run: echo '${{ toJSON(github) }}'
