@@ -1,11 +1,18 @@
 name: Manual workflow
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'branch/tag/commit id'
+        required: true
 
 jobs:
   greet:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Show ref
+        run: echo '${{ inputs.ref }}'
       - name: github context
         run: echo '${{ toJSON(github) }}'
