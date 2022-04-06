@@ -1,30 +1,31 @@
 name: Manual workflow
 
 on:
-  pull_request:
-    types: [closed]
-  # workflow_dispatch:
-  #   inputs:
-  #     ref:
-  #       description: 'branch/tag/commit id'
-  #       required: true
+  push:
+    branches:
+      - release-*
+      - dev-*
 
 jobs:
   set_environment:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       env: ${{ steps.env.outputs.env }}
     steps:
       - id: env
         run: |
-          echo "::set-output name=env::prod"
+          echo $GITHUB_REF_NAME
+          if [[ $GITHUB_REF_NAME == release-* ]]; then
+            echo "::set-output name=env::prod"
+          else
+            echo "::set-output name=env::dev"
+          fi
 
   greet:
     runs-on: ubuntu-latest
     needs: set_environment
+    environment: ${{ needs.set_environment.outputs.env }}
     steps:
       - uses: actions/checkout@v3
-      - run: echo '${{ toJSON(github) }}'
-      # - name: Show
-      #   run: echo '${{ needs.set_environment.outputs.env }}'
+      - name: Show
+        run: echo '${{ needs.set_environment.outputs.env }}'
