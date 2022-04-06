@@ -1,18 +1,33 @@
 name: Manual workflow
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'branch/tag/commit id'
-        required: true
+  pull_request:
+    types: [closed]
+  # workflow_dispatch:
+  #   inputs:
+  #     ref:
+  #       description: 'branch/tag/commit id'
+  #       required: true
 
 jobs:
+  set_environment:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.env.outputs.env }}
+    steps:
+      - id: env
+        run: |
+          echo "::set-output name=env::prod"
+
   greet:
     runs-on: ubuntu-latest
-
+    # needs: set_environment
     steps:
-      - name: Show ref
-        run: echo '${{ inputs.ref }}'
-      - name: github context
-        run: echo '${{ toJSON(github) }}'
+      - uses: actions/checkout@v3
+      - run: 'date > datetime.txt' # create or update a test.txt file
+      - uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Show
+      #   run: echo '${{ needs.set_environment.outputs.env }}'
