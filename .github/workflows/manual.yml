@@ -8,11 +8,18 @@ on:
         required: true
 
 jobs:
+  set_environment:
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.env.outputs.env }}
+    steps:
+      - id: env
+        run: |
+          echo "::set-output name=env::prod"
+
   greet:
     runs-on: ubuntu-latest
-
+    needs: set_environment
     steps:
-      - name: Show ref
-        run: echo '${{ toJSON(github.event.inputs) }}'
-      - name: github context
-        run: echo '${{ toJSON(github) }}'
+      - name: Show
+        run: echo '${{ needs.set_environment.outputs.env }}'
